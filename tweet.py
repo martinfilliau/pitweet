@@ -1,12 +1,15 @@
 import StringIO
 import subprocess
 import os
+from random import choice
 import time
 from datetime import datetime
 from PIL import Image
 from twython import Twython
 
 IMG_FORMAT = 'png'
+
+MESSAGES = ['Hello! #selfie #basil', 'Look at me! #selfpic #basil']
 
 def take_picture():
     command = "raspistill -vf -w {width} -h {height} -t 0 -e {format} -o -".format(width=1000,
@@ -26,7 +29,10 @@ def tweet_picture():
     pic.save(image_io, format='JPEG')
     image_io.seek(0)
     twitter = Twython(get_consumer_key(), get_consumer_secret(), get_access_token(), get_access_token_secret())
-    twitter.update_status_with_media(media=image_io, status='Hello! #selfie #basil')
+    twitter.update_status_with_media(media=image_io, status=get_message())
+
+def get_message():
+    return choice(MESSAGES)
 
 def get_consumer_key():
     return get_kv('PITWEET_CONSUMER_KEY')
