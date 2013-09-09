@@ -9,7 +9,7 @@ from twython import Twython
 
 IMG_FORMAT = 'png'
 
-MESSAGES = ['Hello! #selfie #basil', 'Look at me! #selfpic #basil']
+MESSAGES = ['Hello! #selfie #basil', 'Look at me! #selfpic #basil', 'Hi! #selfpic #basil']
 
 def take_picture():
     command = "raspistill -vf -w {width} -h {height} -t 0 -e {format} -o -".format(width=1000,
