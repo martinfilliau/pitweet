@@ -48,7 +48,7 @@ def tweet_go_wild():
 def tweet_age():
     pic = take_picture(flip=True)
     age = datetime.now() - BORN
-    message = "I was born {days} days ago!".format(age.days)
+    message = "I was born {days} days ago!".format(days=age.days)
     tweet_picture(pic, message)
 
 def get_message():
