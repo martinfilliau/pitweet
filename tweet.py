@@ -11,8 +11,13 @@ IMG_FORMAT = 'png'
 
 MESSAGES = ['Hello! #selfie #basil', 'Look at me! #selfpic #basil', 'Hi! #selfpic #basil']
 
-def take_picture():
-    command = "raspistill -vf -w {width} -h {height} -t 0 -e {format} -o -".format(width=1000,
+def take_picture(flip=True):
+    if flip:
+        command = "raspistill -vf -w {width} -h {height} -t 0 -e {format} -o -".format(width=1000,
+                                                                                    height=750,
+                                                                                    format=IMG_FORMAT)
+    else:
+        command = "raspistill -w {width} -h {height} -t 0 -e {format} -o -".format(width=1000,
                                                                                     height=750,
                                                                                     format=IMG_FORMAT)
     imageData = StringIO.StringIO()
@@ -21,15 +26,22 @@ def take_picture():
     im = Image.open(imageData)
     buffer = im.load()
     imageData.close()
-    return im
-    
-def tweet_picture():
-    pic = take_picture()
     image_io = StringIO.StringIO()
-    pic.save(image_io, format='JPEG')
+    im.save(image_io, format='JPEG')
     image_io.seek(0)
+    return image_io
+    
+def tweet_picture(picture, message):
     twitter = Twython(get_consumer_key(), get_consumer_secret(), get_access_token(), get_access_token_secret())
-    twitter.update_status_with_media(media=image_io, status=get_message())
+    twitter.update_status_with_media(media=picture, status=message)
+
+def tweet_normal():
+    pic = take_picture(flip=True)
+    tweet_picture(pic, get_message())
+    
+def tweet_go_wild():
+    pic = take_picture(flip=False)
+    tweet_picture(pic, "I'm going wild!")
 
 def get_message():
     return choice(MESSAGES)
@@ -49,5 +61,8 @@ def get_access_token_secret():
 def get_kv(key):
     return os.getenv(key)
     
+MODES = [tweet_normal, tweet_normal, tweet_normal, tweet_normal, tweet_go_wild]
+    
 if __name__ == '__main__':
-    tweet_picture()
+    f = choice(MODES)
+    f()
