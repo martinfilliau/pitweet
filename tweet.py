@@ -3,13 +3,15 @@ import subprocess
 import os
 from random import choice
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from PIL import Image
 from twython import Twython
 
 IMG_FORMAT = 'png'
 
 MESSAGES = ['Hello! #selfie #basil', 'Look at me! #selfpic #basil', 'Hi! #selfpic #basil']
+
+BORN = datetime(2013, 9, 1)
 
 def take_picture(flip=True):
     if flip:
@@ -42,6 +44,12 @@ def tweet_normal():
 def tweet_go_wild():
     pic = take_picture(flip=False)
     tweet_picture(pic, "I'm going wild!")
+    
+def tweet_age():
+    pic = take_picture(flip=True)
+    age = datetime.now() - BORN
+    message = "I was born {days} days ago!".format(age.days)
+    tweet_picture(pic, message)
 
 def get_message():
     return choice(MESSAGES)
@@ -61,8 +69,8 @@ def get_access_token_secret():
 def get_kv(key):
     return os.getenv(key)
     
-MODES = [tweet_normal, tweet_normal, tweet_normal, tweet_normal, tweet_go_wild]
-    
+MODES = [tweet_normal, tweet_normal, tweet_normal, tweet_normal, tweet_age, tweet_age, tweet_go_wild]
+
 if __name__ == '__main__':
     f = choice(MODES)
     f()
